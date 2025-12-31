@@ -59,31 +59,10 @@ def collapse_failure_rate(question_metrics_list: List[QuestionMetrics]) -> float
     return len(collapse_cases) / len(greedy_wrong_questions)
 
 
-def exploration_gain(saved_graph_paths: List[Path]) -> float:
-    """
-    # Questions where MULTI-SAMPLING succeeds - # where GREEDY succeeds
-    = multi_correct - greedy_correct
-    """
-    greedy_correct = 0
-    multi_correct = 0
-    
-    for graph_path in saved_graph_paths:
-        with open(graph_path, "rb") as f:
-            graph: ReasoningGraph = pickle.load(f)
-        
-        # Greedy correct?
-        greedy_leaf = graph.nodes[graph.greedy_path[-1]]
-        if greedy_leaf.outcome == OutcomeType.CORRECT:
-            greedy_correct += 1
-        
-        # Multi-sampling correct? 
-        sample_leaves = [n for n in graph.nodes.values() 
-                        if n.is_leaf and not n.is_greedy]
-        if any(leaf.outcome == OutcomeType.CORRECT for leaf in sample_leaves):
-            multi_correct += 1
-    
-    return multi_correct - greedy_correct 
-
+def exploration_gain(qms: list[QuestionMetrics]) -> int:
+    num_sampling_correct = sum(qm.num_correct_leaves > 0 for qm in qms)
+    num_greedy_correct = sum(qm.greedy_outcome == OutcomeType.CORRECT for qm in qms)
+    return num_sampling_correct - num_greedy_correct
 
 def extract_question_metrics(graph: ReasoningGraph, question: Dict,question_id: int) -> QuestionMetrics:
     """Pure extraction - no graph storage!"""
