@@ -47,8 +47,8 @@ def add_chain_to_graph(graph: ReasoningGraph,steps_text: List[str],step_embeddin
                 step_number=t,
                 step_embeddings=accumulated_embeddings.copy(),
                 avg_embedding=prefix_avg_emb,
-                steps_text=steps_text[:t].copy()
-                is_greedy=is_greedy,
+                steps_text=steps_text[:t].copy(),
+                is_greedy=is_greedy
             )
             graph.nodes[next_node_id] = new_node
             graph.adjacency_list[next_node_id] = []
