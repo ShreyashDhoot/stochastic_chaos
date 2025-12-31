@@ -1,3 +1,5 @@
+from typing import List, Dict,Tuple,Optional, Union
+
 def load_lm(model_name: str) -> Tuple[AutoModelForCausalLM, AutoTokenizer]:
     tokenizer = AutoTokenizer.from_pretrained(model_name)
     
