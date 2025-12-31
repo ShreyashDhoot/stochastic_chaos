@@ -18,7 +18,7 @@ from models import load_lm, load_encoder
 from generation import generate_greedy, generate_multi_sample
 from preprocess import split_into_steps, encode_steps
 from dag_build import add_chain_to_graph
-from outcomes import label_leaf_outcomes
+from outcome import label_leaf_outcomes
 from metrics import (
     has_path_diversity, 
     greedy_support_ratio, 
