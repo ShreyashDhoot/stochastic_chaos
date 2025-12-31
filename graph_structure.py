@@ -1,3 +1,5 @@
+from enum import Enum
+
 class OutcomeType(Enum):
     CORRECT = "Correct"
     NEAR_MISS = "NearMiss"
