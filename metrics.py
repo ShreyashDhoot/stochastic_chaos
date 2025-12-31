@@ -86,7 +86,7 @@ def extract_question_metrics(graph: ReasoningGraph, question: Dict,question_id: 
     
     return QuestionMetrics(
         question_id=question_id,
-        path_diversity=len(graph.path_logprobs) > 1,
+        path_diversity=len(graph.leaf_logprobs) > 1,
         greedy_support=greedy_support_ratio(graph),
         path_entropy=path_entropy(graph),
         greedy_outcome=graph.greedy_path[-1].outcome if graph.greedy_path else OutcomeType.FAILURE,
