@@ -1,5 +1,5 @@
 from enum import Enum
-from dataclasses import dataclass
+from dataclasses import dataclass,field
 from typing import List, Dict,Tuple,Optional, Union
 import numpy as np 
 
