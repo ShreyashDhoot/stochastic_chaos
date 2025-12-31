@@ -1,6 +1,8 @@
 import torch 
 import numpy as np
 from transformers import PreTrainedModel, PreTrainedTokenizerBase
+from typing import List, Dict,Tuple,Optional, Union
+
 #calculate log probs 
 def apply_top_p_nucleus(probs: torch.Tensor, top_p: float, min_tokens: int = 1) -> torch.Tensor:
     """
