@@ -5,6 +5,12 @@ import numpy as np
 import pandas as pd
 from graph_structure import ReasoningGraph,Node, OutcomeType,benchmarking_config,QuestionMetrics,ModelMetrics,BenchmarkResults
 
+def softmax(x):
+    x = np.asarray(x, dtype=np.float64)
+    x = x - np.max(x)           # numerically stable
+    ex = np.exp(x)
+    return ex / np.sum(ex)
+
 def greedy_support_ratio(graph: ReasoningGraph) -> float:
     """greedy_logprob / max(non_greedy_logprobs)"""
     path_logprobs = graph.leaf_logprobs  # {"greedy": -2.3, "sample_0": -3.1, "sample_1": -2.8}
