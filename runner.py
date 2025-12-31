@@ -13,7 +13,7 @@ from pathlib import Path
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from sentence_transformers import SentenceTransformer
 
-from graph_structure import ReasoningGraph,Node, OutcomeType
+from graph_structure import ReasoningGraph,Node, OutcomeType,benchmarking_config,QuestionMetrics,ModelMetrics,BenchmarkResults
 from models import load_lm, load_encoder
 from generation import generate_greedy, generate_multi_sample
 from preprocess import split_into_steps, encode_steps
@@ -27,44 +27,6 @@ from metrics import (
 )
 from answer_parser import extract_final_answer, answers_match, normalize_answer
 
-@dataclass
-class benchmarking_config:
-    model_name:str
-    encoder_name:str="all-MiniLM-L6-v2"
-    dataset_name: str
-    num_samples: int = 8
-    temperature: float = 0.7
-    top_p: float = 0.9
-    similarity_threshold: float = 0.9
-    nearmiss_threshold: float = 0.7
-    max_new_tokens: int = 1024
-
-@dataclass
-class QuestionMetrics:
-    question_id: int
-    path_diversity: bool
-    greedy_support: float
-    path_entropy: float
-    greedy_outcome: OutcomeType
-    num_correct_leaves: int
-    
-@dataclass  
-class ModelMetrics:
-    model_name: str
-    dataset_name: str
-    collapse_failure: float      # Model+Dataset level
-    exploration_gain: float      # Model+Dataset level
-    avg_path_entropy: float      # Model+Dataset level
-    question_metrics: List[QuestionMetrics]  # For plotting!
-
-@dataclass
-class BenchmarkResults:
-    model_metrics: ModelMetrics
-    # No graphs - lightweight!
-    
-    def to_question_df(self) -> pd.DataFrame:
-        """Flat DataFrame for per-question plots"""
-        return pd.DataFrame([qm.__dict__ for qm in self.model_metrics.question_metrics])
 
 #function to run the whole pipeline per question
 def run_for_question(model,tokenizer,encoder:SentenceTransformer,config:benchmarking_config,question=Dict)->ReasoningGraph:
