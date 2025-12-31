@@ -67,7 +67,7 @@ class BenchmarkResults:
         return pd.DataFrame([qm.__dict__ for qm in self.model_metrics.question_metrics])
 
 #function to run the whole pipeline per question
-def run_for_question(model,tokenizer,encoder:SentenceTransformer,question=Dict,config:benchmarking_config)->ReasoningGraph:
+def run_for_question(model,tokenizer,encoder:SentenceTransformer,config:benchmarking_config,question=Dict)->ReasoningGraph:
     question_text=question['question']
     ground_truth_answer=question['answer']
     ground_truth_steps=question.get('solution_steps',[])
