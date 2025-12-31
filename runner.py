@@ -49,8 +49,7 @@ def run_for_question(model,tokenizer,encoder:SentenceTransformer,config:benchmar
     #build reasoning graph for greedy sampling 
     greedy_steps=split_into_steps(greedy_answer)
     greedy_embs = encode_steps(encoder, greedy_steps)
-    add_chain_to_graph(graph, greedy_steps, greedy_embs,is_greedy=True, sample_tag="greedy")
-    graph.path_logprobs["greedy"] = greedy_logprobs
+    add_chain_to_graph(graph, greedy_steps, greedy_embs,is_greedy=True,logprob=greedy_logprobs)
 
     #build reasoning graph for multiplesampling 
     for i,(text,logprob) in enumerate(zip(sample_texts,sample_logprobs)):
@@ -58,8 +57,8 @@ def run_for_question(model,tokenizer,encoder:SentenceTransformer,config:benchmar
         if not steps:
             continue
         embs=encode_steps(encoder,steps)
-        add_chain_to_graph(graph,steps,embs,is_greedy=False,sample_tag=f"sample_{i}")
-        graph.path_logprobs[f"sample_{i}"]=logprob
+        add_chain_to_graph(graph,steps,embs,is_greedy=False,logprob=logprob)
+
 
     #breaking in steps and encoding the ground truth answer and seperating 
     #this needs to be list of np.ndarray come back while writing the main 

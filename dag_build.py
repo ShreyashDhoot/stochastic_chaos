@@ -16,7 +16,7 @@ def find_equivalent_node(graph: ReasoningGraph, prefix_avg_emb: np.ndarray,prefi
     return None
 
 
-def add_chain_to_graph(graph: ReasoningGraph,steps_text: List[str],step_embeddings: List[np.ndarray],outcome: OutcomeType,is_greedy: bool = False):
+def add_chain_to_graph(graph: ReasoningGraph,steps_text: List[str],step_embeddings: List[np.ndarray],is_greedy: bool = False,logprob: float | None = None,): 
     """
     Add a single reasoning chain to the graph
     """
@@ -48,6 +48,7 @@ def add_chain_to_graph(graph: ReasoningGraph,steps_text: List[str],step_embeddin
                 step_embeddings=accumulated_embeddings.copy(),
                 avg_embedding=prefix_avg_emb,
                 steps_text=steps_text[:t].copy()
+                is_greedy=is_greedy,
             )
             graph.nodes[next_node_id] = new_node
             graph.adjacency_list[next_node_id] = []
@@ -66,7 +67,12 @@ def add_chain_to_graph(graph: ReasoningGraph,steps_text: List[str],step_embeddin
     
     # Mark final node as leaf
     graph.nodes[current_node_id].is_leaf = True
-    graph.nodes[current_node_id].outcome = outcome
+    
+        # store / merge leaf logprob (MAX over merged chains)
+    if logprob is not None:
+        if not hasattr(graph, "leaf_logprobs"):
+            graph.leaf_logprobs = {}  # Dict[int, float]
+        graph.leaf_logprobs[leaf_id] = max(logprob, graph.leaf_logprobs.get(leaf_id, float("-inf")))
     
     # Track greedy path
     if is_greedy:
