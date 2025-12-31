@@ -1,7 +1,7 @@
 from typing import List, Optional
 import numpy as np
 from graph_structure import ReasoningGraph, Node, Edge, OutcomeType
-from outcome import cosine_similarity 
+from outcome import stepwise_cosine_similarity 
 
 def find_equivalent_node(graph: ReasoningGraph, prefix_avg_emb: np.ndarray,prefix_length: int) -> Optional[int]:
     """
@@ -10,7 +10,7 @@ def find_equivalent_node(graph: ReasoningGraph, prefix_avg_emb: np.ndarray,prefi
     """
     for node_id, node in graph.nodes.items():
         if node.step_number == prefix_length:
-            similarity = cosine_similarity(prefix_avg_emb, node.avg_embedding)
+            similarity = stepwise_cosine_similarity(prefix_avg_emb, node.avg_embedding)
             if similarity >= graph.similarity_threshold:
                 return node_id
     return None
