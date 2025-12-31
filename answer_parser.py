@@ -1,3 +1,6 @@
+import re
+from typing import List, Tuple
+
 def extract_final_answer(answer_text: str, dataset_name: str) -> Tuple[str, List[str]]:
     """
     Extract final answer + reasoning steps

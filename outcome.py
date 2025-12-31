@@ -1,3 +1,9 @@
+import re
+from typing import List, Optional
+import numpy as np
+from graph_structure import ReasoningGraph, Node, OutcomeType
+from answer_parser import answers_match  
+
 def extract_answer_from_generation(text: str) -> str:
     """Extract final answer from generated text"""
     # Look for common answer patterns

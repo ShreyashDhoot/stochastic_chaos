@@ -1,3 +1,8 @@
+from typing import List, Optional
+import numpy as np
+from graph_structure import ReasoningGraph, Node, Edge, OutcomeType
+from outcomes import cosine_similarity 
+
 def find_equivalent_node(graph: ReasoningGraph, prefix_avg_emb: np.ndarray,prefix_length: int) -> Optional[int]:
     """
     Find existing node with equivalent prefix
