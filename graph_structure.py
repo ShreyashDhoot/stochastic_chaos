@@ -41,6 +41,8 @@ class ReasoningGraph:
     next_node_id: int = 1
     similarity_threshold: float = 0.9
     nearmiss_overlap_threshold: float = 0.7
+    leaf_logprobs: Dict[int, float] = field(default_factory=dict)
+
     
     def __post_init__(self):
         """Initialize root node"""
