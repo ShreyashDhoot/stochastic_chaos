@@ -7,7 +7,7 @@ from graph_structure import ReasoningGraph,Node, OutcomeType,benchmarking_config
 
 def greedy_support_ratio(graph: ReasoningGraph) -> float:
     """greedy_logprob / max(non_greedy_logprobs)"""
-    path_logprobs = graph.path_logprobs  # {"greedy": -2.3, "sample_0": -3.1, "sample_1": -2.8}
+    path_logprobs = graph.leaf_logprobs  # {"greedy": -2.3, "sample_0": -3.1, "sample_1": -2.8}
     
     if "greedy" not in path_logprobs:
         return 0.0
@@ -30,7 +30,7 @@ def greedy_support_ratio(graph: ReasoningGraph) -> float:
 
 def path_entropy(graph)->float:
     """COMPUTES Shannon entropy H(p)"""
-    logprobs = np.array(list(graph.path_logprobs.values()))
+    logprobs = np.array(list(graph.leaf_logprobs.values()))
     probs = softmax(logprobs)
     return float(-np.sum(probs * np.log2(probs + 1e-8)))
 
