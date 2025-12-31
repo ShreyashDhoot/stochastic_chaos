@@ -55,7 +55,7 @@ def collapse_failure_rate(question_metrics_list: List[QuestionMetrics]) -> float
     
     return len(collapse_cases) / len(greedy_wrong_questions)
 
-# metrics.py
+
 def exploration_gain(saved_graph_paths: List[Path]) -> float:
     """
     # Questions where MULTI-SAMPLING succeeds - # where GREEDY succeeds
