@@ -66,6 +66,7 @@ def add_chain_to_graph(graph: ReasoningGraph,steps_text: List[str],step_embeddin
         current_node_id = next_node_id
     
     # Mark final node as leaf
+    leaf_id = current_node_id
     graph.nodes[current_node_id].is_leaf = True
     
         # store / merge leaf logprob (MAX over merged chains)
