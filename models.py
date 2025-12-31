@@ -1,6 +1,7 @@
 from typing import List, Dict,Tuple,Optional, Union
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from sentence_transformers import SentenceTransformer
+import torch 
 
 def load_lm(model_name: str) -> Tuple[AutoModelForCausalLM, AutoTokenizer]:
     tokenizer = AutoTokenizer.from_pretrained(model_name)
