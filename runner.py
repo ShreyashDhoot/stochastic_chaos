@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import argparse
 import datasets
+import re
 import pandas as pd
 import torch
 import numpy as np 
@@ -24,7 +25,7 @@ from metrics import (
     extract_question_metrics,
     exploration_gain
 )
-from plotting import generate_all_plots
+from answer_parser import extract_final_answer, answers_match, normalize_answer
 
 @dataclass
 class benchmarking_config:
@@ -68,7 +69,7 @@ class BenchmarkResults:
 #function to run the whole pipeline per question
 def run_for_question(model,tokenizer,encoder:SentenceTransformer,question=Dict,config:benchmarking_config)->ReasoningGraph:
     question_text=question['question']
-    #some confusion / descrepency come back here 
+    ground_truth_answer=question['answer']
     ground_truth_steps=question.get('solution_steps',[])
 
     print(f"preprocessing question : {question_text[:60]}...")
@@ -98,8 +99,8 @@ def run_for_question(model,tokenizer,encoder:SentenceTransformer,question=Dict,c
 
     #breaking in steps and encoding the ground truth answer and seperating 
     #this needs to be list of np.ndarray come back while writing the main 
-    gt_step_embs = encode_steps(encoder,ground_truth_steps)
-
+    gt_step_embs = encode_steps(encoder, ground_truth_steps) if ground_truth_steps else None
+    
     #labelling the leaf outcomes 
     label_leaf_outcomes(graph,gt_step_embs)
 
