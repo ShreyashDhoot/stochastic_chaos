@@ -180,6 +180,7 @@ def main(model_name: str, hf_dataset: str, output_dir: str = "results"):
         collapse_failure=collapse_failure_rate(question_metrics_list),
         exploration_gain=exploration_gain(question_metrics_list),
         avg_path_entropy=np.mean(question_df.path_entropy),
+        question_metrics=question_metrics_list,
     )
     
     # 3. Save ModelMetrics

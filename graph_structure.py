@@ -83,6 +83,7 @@ class QuestionMetrics:
 class ModelMetrics:
     model_name: str
     dataset_name: str
+    num_questions: int
     collapse_failure: float      # Model+Dataset level
     exploration_gain: float      # Model+Dataset level
     avg_path_entropy: float      # Model+Dataset level
