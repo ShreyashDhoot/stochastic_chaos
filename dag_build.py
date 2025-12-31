@@ -1,7 +1,14 @@
 from typing import List, Optional
 import numpy as np
 from graph_structure import ReasoningGraph, Node, Edge, OutcomeType
-from outcome import stepwise_cosine_similarity 
+
+def cosine_similarity_vec(a: np.ndarray, b: np.ndarray) -> float:
+    a = np.asarray(a)
+    b = np.asarray(b)
+    denom = np.linalg.norm(a) * np.linalg.norm(b)
+    if denom == 0:
+        return 0.0
+    return float(np.dot(a, b) / denom)
 
 def find_equivalent_node(graph: ReasoningGraph, prefix_avg_emb: np.ndarray,prefix_length: int) -> Optional[int]:
     """
@@ -10,7 +17,7 @@ def find_equivalent_node(graph: ReasoningGraph, prefix_avg_emb: np.ndarray,prefi
     """
     for node_id, node in graph.nodes.items():
         if node.step_number == prefix_length:
-            similarity = stepwise_cosine_similarity(prefix_avg_emb, node.avg_embedding)
+            similarity = cosine_similarity_vec(prefix_avg_emb, node.avg_embedding)
             if similarity >= graph.similarity_threshold:
                 return node_id
     return None
