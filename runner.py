@@ -64,7 +64,7 @@ def run_for_question(model,tokenizer,encoder:SentenceTransformer,config:benchmar
     gt_step_embs = encode_steps(encoder, ground_truth_steps) if ground_truth_steps else None
     
     #labelling the leaf outcomes 
-    label_leaf_outcomes(graph,gt_step_embs)
+    label_leaf_outcomes(graph,ground_truth_answer,gt_step_embs)
 
     print(graph)
     return graph
@@ -84,7 +84,7 @@ def run_benchmark(dataset: List[Dict], config:benchmarking_config, output_dir: s
 
     for i, question in enumerate(dataset):
         print(f"\n[{i+1}/{len(dataset)}]")
-        graph = run_for_question(model, tokenizer, encoder, question, config)
+        graph = run_for_question(model, tokenizer, encoder,config,question)
         q_metrics=extract_question_metrics(graph,question,i)
         question_metrics_list.append(q_metrics)
         # Save per-question graph
@@ -144,20 +144,20 @@ def load_hf_dataset(dataset_name: str, split: str = "test",dataset_config: str |
         'solution_steps': row.get('solution', [])  # Optional
     } for i, row in enumerate(ds)]
 
-def run_full_pipeline(model_name: str, hf_dataset: str, encoder_name: str = "all-MiniLM-L6-v2", 
+def run_full_pipeline(model_name: str, hf_dataset: str, dataset_config: str | None = None,encoder_name: str = "all-MiniLM-L6-v2", 
                      output_dir: str = "results", num_samples: int = 1000):
     """Complete pipeline: Load → Run → Save"""
     print(f"Starting pipeline: {model_name} on {hf_dataset}")
     
     # 1. Load dataset
-    dataset = load_hf_dataset(hf_dataset, num_samples=num_samples)
+    dataset = load_hf_dataset(hf_dataset,dataset_config=args.dataset_config, num_samples=num_samples)
     
     # 2. Create config
     config = benchmarking_config(
         model_name=model_name,
         encoder_name=encoder_name,
         dataset_name=hf_dataset,
-        num_samples=8,  # Fixed for your table
+        num_samples=8,  
         temperature=0.7,
         top_p=0.9
     )
@@ -165,7 +165,6 @@ def run_full_pipeline(model_name: str, hf_dataset: str, encoder_name: str = "all
     # 3. Run benchmark (saves graphs + metrics)
     question_metrics = run_benchmark(dataset, config, output_dir)
     
-    # 4. Generate model metrics + plots
     main(model_name, hf_dataset, output_dir)
     
     print(f"COMPLETE! Check results/{hf_dataset}_{model_name.split('/')[-1]}/")
@@ -174,6 +173,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Reasoning Graph Benchmark")
     parser.add_argument("--model", required=True, help="HF model name (e.g., microsoft/DialoGPT-medium)")
     parser.add_argument("--dataset", required=True, help="HF dataset (e.g., gsm8k)")
+    parser.add_argument("--dataset-config", default=None, help="HF dataset config name (e.g., main)")
     parser.add_argument("--encoder", default="all-MiniLM-L6-v2", help="Sentence encoder")
     parser.add_argument("--output-dir", default="results", help="Output directory")
     parser.add_argument("--num-samples", type=int, default=1000, help="Dataset size")
@@ -183,6 +183,7 @@ if __name__ == "__main__":
     run_full_pipeline(
         model_name=args.model,
         hf_dataset=args.dataset,
+        dataset_config=args.dataset_config,
         encoder_name=args.encoder,
         output_dir=args.output_dir,
         num_samples=args.num_samples
