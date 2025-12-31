@@ -20,7 +20,6 @@ from preprocess import split_into_steps, encode_steps
 from dag_build import add_chain_to_graph
 from outcome import label_leaf_outcomes
 from metrics import (
-    has_path_diversity, 
     greedy_support_ratio, 
     collapse_failure_rate,
     extract_question_metrics,
