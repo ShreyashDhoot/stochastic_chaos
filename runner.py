@@ -6,6 +6,7 @@ import pandas as pd
 import torch
 import numpy as np 
 import pickle
+from enum import Enum
 from typing import List, Dict,Tuple,Optional, Union
 from dataclasses import dataclass
 from pathlib import Path
