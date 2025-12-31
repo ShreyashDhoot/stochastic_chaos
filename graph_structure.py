@@ -57,8 +57,8 @@ class ReasoningGraph:
 @dataclass
 class benchmarking_config:
     model_name:str
-    encoder_name:str="all-MiniLM-L6-v2"
     dataset_name: str
+    encoder_name:str="all-MiniLM-L6-v2"
     num_samples: int = 8
     temperature: float = 0.7
     top_p: float = 0.9
@@ -87,7 +87,6 @@ class ModelMetrics:
 @dataclass
 class BenchmarkResults:
     model_metrics: ModelMetrics
-    # No graphs - lightweight!
     
     def to_question_df(self) -> pd.DataFrame:
         """Flat DataFrame for per-question plots"""
