@@ -128,10 +128,13 @@ def main(model_name: str, hf_dataset: str, output_dir: str = "results"):
     print(f" Complete analysis for {model_name} on {hf_dataset}")
     return model_metrics
 
-def load_hf_dataset(dataset_name: str, split: str = "test", num_samples: int = 1000) -> List[Dict]:
+def load_hf_dataset(dataset_name: str, split: str = "test",dataset_config: str | None = None, num_samples: int = 1000) -> List[Dict]:
     """Load HF dataset → List[Dict]"""
-    print(f"Loading {dataset_name} ({split}[:{num_samples}])")
-    ds = datasets.load_dataset(dataset_name, split=split[:num_samples])
+    print(f"Loading {dataset_name}/{dataset_config} ({split}[:{num_samples}])")
+    if dataset_config is None:
+        ds = datasets.load_dataset(dataset_name, split=f"{split}[:{num_samples}]")
+    else:
+        ds = datasets.load_dataset(dataset_name, dataset_config, split=f"{split}[:{num_samples}]")
     
     # Standardize format (GSM8K, etc.)
     return [{
