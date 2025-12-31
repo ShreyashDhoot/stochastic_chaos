@@ -6,7 +6,6 @@ import numpy as np
 import pandas as pd
 
 from graph_structure import ReasoningGraph, Node, OutcomeType
-from runner import QuestionMetrics
 
 def greedy_support_ratio(graph: ReasoningGraph) -> float:
     """greedy_logprob / max(non_greedy_logprobs)"""
