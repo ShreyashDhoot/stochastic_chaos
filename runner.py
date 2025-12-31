@@ -27,7 +27,7 @@ from metrics import (
 )
 from answer_parser import extract_final_answer, answers_match, normalize_answer
 from graphviz import Digraph
-
+from IPython.display import Image, display
 
 def plot_reasoning_graph(graph, max_edges=120, max_label_chars=40):
     dot = Digraph("reasoning_graph", format="png")
@@ -124,7 +124,9 @@ def run_for_question(model,tokenizer,encoder:SentenceTransformer,config:benchmar
     #labelling the leaf outcomes 
     label_leaf_outcomes(graph,ground_truth_answer,gt_step_embs)
     dot= plot_reasoning_graph(graph)
-    dot
+    png_path = dot.render("/kaggle/working/reasoning_graph_q0", format="png", cleanup=True)
+    display(Image(png_path))
+    print("GRAPH CREATED\n")
     return graph
 
 def run_benchmark(dataset: List[Dict], config:benchmarking_config, output_dir: str = "results") -> list[QuestionMetrics]:

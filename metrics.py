@@ -95,6 +95,6 @@ def extract_question_metrics(graph: ReasoningGraph, question: Dict,question_id: 
         path_diversity=len(graph.leaf_logprobs) > 1,
         greedy_support=greedy_support_ratio(graph),
         path_entropy=path_entropy(graph),
-        greedy_outcome=graph.greedy_path[-1].outcome if graph.greedy_path else OutcomeType.FAILURE,
+        greedy_outcome = (graph.nodes[graph.greedy_path[-1]].outcome if graph.greedy_path else OutcomeType.FAILURE)
         num_correct_leaves=len(correct_leaves)
     )
