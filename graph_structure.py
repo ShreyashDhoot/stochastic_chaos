@@ -49,7 +49,8 @@ class ReasoningGraph:
             step_number=0,
             step_embeddings=[],
             avg_embedding=np.zeros(384),  # adjust based on encoder dim
-            steps_text=[]
+            steps_text=[],
+            is_greedy=False 
         )
         self.nodes[0] = root
         self.adjacency_list[0] = []

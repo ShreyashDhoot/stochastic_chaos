@@ -38,8 +38,10 @@ def run_for_question(model,tokenizer,encoder:SentenceTransformer,config:benchmar
 
     #generating the greedy response 
     greedy_answer,greedy_logprobs=generate_greedy(model,tokenizer,question_text,config.max_new_tokens)
+    print(greedy_answer)
     ##generate response for multiple sample 
     sample_texts, sample_logprobs = generate_multi_sample(model, tokenizer, question_text, config.num_samples,config.temperature, config.top_p, config.max_new_tokens)
+    print(sample_texts)
 
     ##creating reasoning graph 
     graph = ReasoningGraph(question_id=question.get('id', 0),question_text=question_text,ground_truth_answer=ground_truth_answer,similarity_threshold=config.similarity_threshold,nearmiss_overlap_threshold=config.nearmiss_threshold)
