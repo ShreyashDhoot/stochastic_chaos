@@ -103,7 +103,8 @@ def create_visualizations(df: pd.DataFrame, output_dir: str = "analysis"):
 
 if __name__ == "__main__":
     df = load_all_results("results")
-    figs, table = create_visualizations(df)
+    fig2d, fig3d, table = create_visualizations(df)  # Changed: unpack 3 values
     
-    print(f"\n Analysis complete! Check 'analysis/' folder")
+    print(f"\n✓ Analysis complete! Check 'analysis/' folder")
     print(f"{len(df)} model-dataset combinations analyzed")
+
