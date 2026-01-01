@@ -203,6 +203,23 @@ def load_hf_dataset(dataset_name: str, split: str = "test",dataset_config: str |
     # Detect dataset format and standardize
     result = []
     for i, row in enumerate(ds):
+        # StrategyQA format (tasksource/strategy-qa)
+        if 'qid' in row and 'facts' in row and 'decomposition' in row:
+            # Concatenate description + facts + question into one prompt
+            description = row.get('description', '').strip()
+            facts = ' '.join(row.get('facts', [])).strip()
+            question = row.get('question', '').strip()
+            
+            # Build composite question
+            parts = [p for p in [description, facts, question] if p]
+            composite_question = ' '.join(parts)
+            
+            result.append({
+                'id': i,
+                'question': composite_question,
+                'answer': str(row['answer']).lower(),  # 'true' or 'false'
+                'solution_steps': []  # No intermediate reasoning
+            })
         # SVAMP format (ChilleD/SVAMP)
         if 'question_concat' in row:
             result.append({
