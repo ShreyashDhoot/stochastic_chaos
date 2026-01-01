@@ -197,8 +197,8 @@ def load_hf_dataset(dataset_name: str, split: str = "test",dataset_config: str |
         ds = datasets.load_dataset(dataset_name, split=f"{split}[:{num_samples}]")
     else:
         ds = datasets.load_dataset(dataset_name, dataset_config, split=f"{split}[:{num_samples}]")
+    
     print("dataset loaded")
-        print("dataset loaded")
     
     # Detect dataset format and standardize
     result = []
