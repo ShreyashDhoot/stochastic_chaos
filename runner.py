@@ -130,8 +130,8 @@ def run_for_question(model,tokenizer,encoder:SentenceTransformer,config:benchmar
 def run_benchmark(dataset: List[Dict], config:benchmarking_config, output_dir: str = "results") -> list[QuestionMetrics]:
     """Run complete benchmark"""
     model_short = config.model_name.split('/')[-1]
-    output_path = Path(output_dir) / model_short / config.dataset_name
-    output_path.mkdir(parents=True, exist_ok=True)
+    dataset_safe = config.dataset_name.replace('/', '-')
+    output_path = Path(output_dir) / model_short / dataset_safe
     output_path.mkdir(parents=True, exist_ok=True)
 
     print(f"Loading model: {config.model_name}")
@@ -164,9 +164,11 @@ def run_benchmark(dataset: List[Dict], config:benchmarking_config, output_dir: s
 
 def main(model_name: str, hf_dataset: str, output_dir: str = "results"):
     """Load existing results → Model/Dataset metrics → ALL plots!"""
+    model_short = model_name.split('/')[-1]
+    dataset_safe = hf_dataset.replace('/', '-')
 
     # 1. Load QuestionMetrics (no graphs needed!)
-    output_path = Path(output_dir) / f"{hf_dataset}_{model_name.split('/')[-1]}"
+    output_path = Path(output_dir) / model_short / dataset_safe
     with open(output_path / "question_metrics.pkl", "rb") as f:
         question_metrics_list = pickle.load(f)
     
@@ -238,7 +240,7 @@ def load_hf_dataset(dataset_name: str, split: str = "test",dataset_config: str |
             })
 
         # SVAMP format (ChilleD/SVAMP)
-        if 'question_concat' in row:
+        elif 'question_concat' in row:
             result.append({
                 'id': i,
                 'question': row['question_concat'],
