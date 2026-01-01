@@ -192,6 +192,12 @@ def main(model_name: str, hf_dataset: str, output_dir: str = "results"):
 
 def load_hf_dataset(dataset_name: str, split: str = "test",dataset_config: str | None = None, num_samples: int = 1000) -> List[Dict]:
     """Load HF dataset → List[Dict]"""
+    
+        # StrategyQA only has 'train' split, adjust if needed
+    if 'strategy-qa' in dataset_name.lower() and split == 'test':
+        split = 'train'
+        print(f"Note: StrategyQA only has 'train' split, using that instead")
+
     print(f"Loading {dataset_name}/{dataset_config} ({split}[:{num_samples}])")
     if dataset_config is None:
         ds = datasets.load_dataset(dataset_name, split=f"{split}[:{num_samples}]")
