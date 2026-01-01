@@ -93,10 +93,9 @@ def run_for_question(model,tokenizer,encoder:SentenceTransformer,config:benchmar
 
     #generating the greedy response 
     greedy_answer,greedy_logprobs=generate_greedy(model,tokenizer,question_text,config.max_new_tokens)
-    print(f"greedy decoded: {greedy_answer}")
+
     ##generate response for multiple sample 
     sample_texts, sample_logprobs = generate_multi_sample(model, tokenizer, question_text, config.num_samples,config.temperature, config.top_p, config.max_new_tokens)
-    print(f"multiple decoded: {sample_texts}\n")
 
     ##creating reasoning graph 
     print("Building reasoning graph...")
@@ -104,7 +103,6 @@ def run_for_question(model,tokenizer,encoder:SentenceTransformer,config:benchmar
 
     #build reasoning graph for greedy sampling 
     greedy_steps=split_into_steps(greedy_answer)
-    print("greedy decoding broken into steps:\n",greedy_steps)
     greedy_embs = encode_steps(encoder, greedy_steps)
     add_chain_to_graph(graph, greedy_steps, greedy_embs,is_greedy=True,logprob=greedy_logprobs)
 
@@ -235,7 +233,7 @@ def load_hf_dataset(dataset_name: str, split: str = "test",dataset_config: str |
                 'answer': str(row['answer']).lower(),  # 'true' or 'false'
                 'solution_steps': []  # No intermediate reasoning
             })
-            
+
         # SVAMP format (ChilleD/SVAMP)
         if 'question_concat' in row:
             result.append({
