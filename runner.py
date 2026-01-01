@@ -198,13 +198,31 @@ def load_hf_dataset(dataset_name: str, split: str = "test",dataset_config: str |
     else:
         ds = datasets.load_dataset(dataset_name, dataset_config, split=f"{split}[:{num_samples}]")
     print("dataset loaded")
-    # Standardize format (GSM8K, etc.)
-    return [{
-        'id': i,
-        'question': row['question'],
-        'answer': row.get('answer', row.get('final_answer', '')),
-        'solution_steps': row.get('solution', [])  # Optional
-    } for i, row in enumerate(ds)]
+        print("dataset loaded")
+    
+    # Detect dataset format and standardize
+    result = []
+    for i, row in enumerate(ds):
+        # SVAMP format (ChilleD/SVAMP)
+        if 'question_concat' in row:
+            result.append({
+                'id': i,
+                'question': row['question_concat'],
+                'answer': str(row['Answer']),
+                'solution_steps': [] 
+            })
+        # GSM8K format (standard 'question' column)
+        elif 'question' in row:
+            result.append({
+                'id': i,
+                'question': row['question'],
+                'answer': row.get('answer', row.get('final_answer', '')),
+                'solution_steps': row.get('solution', [])
+            })
+        else:
+            raise ValueError(f"Unknown dataset format. Available columns: {list(row.keys())}")
+    
+    return result
 
 def run_full_pipeline(model_name: str, hf_dataset: str, dataset_config: str | None = None,encoder_name: str = "all-MiniLM-L6-v2", 
                      output_dir: str = "results", num_samples: int = 1000):
