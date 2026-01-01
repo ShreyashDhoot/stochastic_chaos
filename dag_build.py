@@ -28,6 +28,7 @@ def add_chain_to_graph(graph: ReasoningGraph,steps_text: List[str],step_embeddin
     Add a single reasoning chain to the graph
     """
     current_node_id = graph.root_id
+    traversed_path=[graph.root_id]
     accumulated_embeddings = []
     
     for t in range(1, len(steps_text) + 1):
@@ -71,6 +72,7 @@ def add_chain_to_graph(graph: ReasoningGraph,steps_text: List[str],step_embeddin
             graph.adjacency_list[current_node_id].append(next_node_id)
         
         current_node_id = next_node_id
+        traversed_path.append(next_node_id)
     
     # Mark final node as leaf
     leaf_id = current_node_id
@@ -91,10 +93,4 @@ def add_chain_to_graph(graph: ReasoningGraph,steps_text: List[str],step_embeddin
     
     # Track greedy path
     if is_greedy:
-        # Reconstruct path from root to this leaf
-        path = [graph.root_id]
-        for t in range(1, len(steps_text) + 1):
-            prefix_avg = np.mean(step_embeddings[:t], axis=0)
-            node_id = find_equivalent_node(graph, prefix_avg, t)
-            path.append(node_id if node_id else current_node_id)
-        graph.greedy_path = path
+        graph.greedy_path = traversed_path

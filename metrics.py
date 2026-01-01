@@ -68,9 +68,14 @@ def extract_question_metrics(graph: ReasoningGraph, question: Dict,question_id: 
     """Pure extraction - no graph storage!"""
     leaves = [n for n in graph.nodes.values() if n.is_leaf]
     correct_leaves = [n for n in leaves if n.outcome == OutcomeType.CORRECT]
-    correct_leaves_multisample=sum((n.outcome == OutcomeType.CORRECT) and (not n.is_greedy) for n in leaves)
-    path_diversity = (len(leaves) > 1) and (correct_leaves_multisample >= 2)
-
+    greedy_leaf_id = graph.greedy_path[-1] if graph.greedy_path else None
+    
+    num_correct_multisample = sum(
+        (n.outcome == OutcomeType.CORRECT and n.node_id != greedy_leaf_id)
+        for n in leaves
+    )
+    path_diversity = (len(leaves) > 1) and (num_correct_multisample >= 2)
+    
     return QuestionMetrics(
         question_id=question_id,
         path_diversity=path_diversity,
