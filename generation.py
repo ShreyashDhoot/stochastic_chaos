@@ -74,7 +74,8 @@ def compute_chain_logprob(model,tokenizer,prompt: str,chain_text: str,temperatur
             [current_input, next_token_id.view(1, 1)], dim=1
         )
 
-    return log_prob
+    avg_path_logprobs=log_prob/max(1, len(chain_token_ids))
+    return avg_path_logprobs
 
 
 #generate answer for a question using greedy decoding i.e T=0
