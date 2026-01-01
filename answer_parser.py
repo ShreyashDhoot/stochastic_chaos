@@ -40,6 +40,16 @@ def extract_final_answer(answer_text: str, dataset_name: str) -> Tuple[str, List
 
 def normalize_answer(answer: str) -> str:
     """Normalize for comparison"""
+    # Convert to string if not already (safety for bool types)
+    if not isinstance(answer, str):
+        answer = str(answer).lower()
+    
+    answer = answer.lower().strip()
+    
+    # Boolean answers (StrategyQA - check first before regex)
+    if answer in ['true', 'false']:
+        return answer
+
     # Extract numbers
     nums = re.findall(r'-?\d+\.?\d*', answer)
     if nums:
