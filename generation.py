@@ -165,5 +165,5 @@ def generate_multi_sample(model, tokenizer, prompt: str, k: int,
             temperature=temperature, top_p=top_p 
         )
         logprobs.append(logprob)
-    print(f{'Generated {k} samples with logprobs:':logprobs})
+    print(f'Generated {k} samples with logprobs:{logprobs}')
     return texts, logprobs 
