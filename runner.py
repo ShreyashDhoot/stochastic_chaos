@@ -129,7 +129,9 @@ def run_for_question(model,tokenizer,encoder:SentenceTransformer,config:benchmar
 
 def run_benchmark(dataset: List[Dict], config:benchmarking_config, output_dir: str = "results") -> list[QuestionMetrics]:
     """Run complete benchmark"""
-    output_path = Path(output_dir) / f"{config.dataset_name}_{config.model_name.split('/')[-1]}"
+    model_short = config.model_name.split('/')[-1]
+    output_path = Path(output_dir) / model_short / config.dataset_name
+    output_path.mkdir(parents=True, exist_ok=True)
     output_path.mkdir(parents=True, exist_ok=True)
 
     print(f"Loading model: {config.model_name}")
