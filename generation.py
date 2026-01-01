@@ -84,7 +84,7 @@ def generate_greedy(model, tokenizer, prompt: str, max_new_tokens: int = 1024) -
     Generate deterministically (T=0) AND compute path log-probability
     Returns: (generated_text: str, logprob: float)
     """
-    messages = [{"role": "system", "content": "reason out the logic in steps and give the final answer"},
+    messages = [{"role": "system", "content": "reason out the logic in steps and give the final answer.Final answer should be number or true/false"},
                 {"role": "user", "content": prompt}]
     full_prompt = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
     
@@ -127,7 +127,7 @@ def generate_multi_sample(model, tokenizer, prompt: str, k: int,
     
     #build prompt
     messages = [
-        {"role": "system", "content": "reason out the logic in steps and give the final answer"},
+        {"role": "system", "content": "reason out the logic in steps and give the final answer.Final answer should be number or true/false"},
         {"role": "user", "content": prompt}
     ]
     full_prompt = tokenizer.apply_chat_template(

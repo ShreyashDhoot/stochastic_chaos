@@ -192,8 +192,8 @@ def main(model_name: str, hf_dataset: str, output_dir: str = "results"):
 
 def load_hf_dataset(dataset_name: str, split: str = "test",dataset_config: str | None = None, num_samples: int = 1000) -> List[Dict]:
     """Load HF dataset → List[Dict]"""
-    
-        # StrategyQA only has 'train' split, adjust if needed
+
+    # StrategyQA only has 'train' split, adjust if needed
     if 'strategy-qa' in dataset_name.lower() and split == 'test':
         split = 'train'
         print(f"Note: StrategyQA only has 'train' split, using that instead")
@@ -211,13 +211,22 @@ def load_hf_dataset(dataset_name: str, split: str = "test",dataset_config: str |
     for i, row in enumerate(ds):
         # StrategyQA format (tasksource/strategy-qa)
         if 'qid' in row and 'facts' in row and 'decomposition' in row:
-            # Concatenate description + facts + question into one prompt
+            # Build labeled composite question
+            parts = []
+    
             description = row.get('description', '').strip()
-            facts = ' '.join(row.get('facts', [])).strip()
+            if description:
+                parts.append(f"Description: {description}")
+    
+            facts_list = row.get('facts', [])
+            if facts_list:
+                facts_text = ' '.join(facts_list).strip()
+                parts.append(f"Facts: {facts_text}")
+    
             question = row.get('question', '').strip()
-            
-            # Build composite question
-            parts = [p for p in [description, facts, question] if p]
+             if question:
+                parts.append(f"Question: {question}")
+    
             composite_question = ' '.join(parts)
             
             result.append({
@@ -226,6 +235,7 @@ def load_hf_dataset(dataset_name: str, split: str = "test",dataset_config: str |
                 'answer': str(row['answer']).lower(),  # 'true' or 'false'
                 'solution_steps': []  # No intermediate reasoning
             })
+            
         # SVAMP format (ChilleD/SVAMP)
         if 'question_concat' in row:
             result.append({
