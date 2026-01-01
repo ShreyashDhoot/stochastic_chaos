@@ -1,0 +1,3 @@
+question_id,path_diversity,greedy_support,path_entropy,greedy_outcome,num_correct_leaves
+0,True,0.0,-1.442695024907551e-08,OutcomeType.FAILURE,0
+1,True,0.0,-1.442695024907551e-08,OutcomeType.FAILURE,0
