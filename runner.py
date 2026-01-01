@@ -191,6 +191,7 @@ def main(model_name: str, hf_dataset: str, output_dir: str = "results"):
     return model_metrics
 
 def load_hf_dataset(dataset_name: str, split: str = "test",dataset_config: str | None = None, num_samples: int = 1000) -> List[Dict]:
+
     """Load HF dataset → List[Dict]"""
 
     # StrategyQA only has 'train' split, adjust if needed
@@ -224,7 +225,7 @@ def load_hf_dataset(dataset_name: str, split: str = "test",dataset_config: str |
                 parts.append(f"Facts: {facts_text}")
     
             question = row.get('question', '').strip()
-             if question:
+            if question:
                 parts.append(f"Question: {question}")
     
             composite_question = ' '.join(parts)
