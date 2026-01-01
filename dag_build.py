@@ -81,6 +81,13 @@ def add_chain_to_graph(graph: ReasoningGraph,steps_text: List[str],step_embeddin
         if not hasattr(graph, "leaf_logprobs"):
             graph.leaf_logprobs = {}  # Dict[int, float]
         graph.leaf_logprobs[leaf_id] = max(logprob, graph.leaf_logprobs.get(leaf_id, float("-inf")))
+
+    ######################################################
+    #----------debug info ----------------#
+    print(f"[leaf] q={graph.question_id} leaf_id={leaf_id} "
+    f"is_greedy={graph.nodes[leaf_id].is_greedy} "
+    f"logprob={logprob} type={type(logprob)}")
+    ######################################################
     
     # Track greedy path
     if is_greedy:

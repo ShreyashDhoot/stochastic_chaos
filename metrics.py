@@ -69,7 +69,7 @@ def extract_question_metrics(graph: ReasoningGraph, question: Dict,question_id: 
     leaves = [n for n in graph.nodes.values() if n.is_leaf]
     correct_leaves = [n for n in leaves if n.outcome == OutcomeType.CORRECT]
     correct_leaves_multisample=sum((n.outcome == OutcomeType.CORRECT) and (not n.is_greedy) for n in leaves)
-    path_diversity = (len(leaves) > 1) and (num_correct_multisample >= 2)
+    path_diversity = (len(leaves) > 1) and (correct_leaves_multisample >= 2)
 
     return QuestionMetrics(
         question_id=question_id,
