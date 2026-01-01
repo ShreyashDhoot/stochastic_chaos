@@ -3,42 +3,62 @@ import plotly.express as px
 import plotly.graph_objects as go
 from pathlib import Path
 import numpy as np
+import pickle
 
 def load_all_results(results_dir: str = "results") -> pd.DataFrame:
     """Load ALL model+dataset results → master DataFrame"""
     results_dir = Path(results_dir)
     all_results = []
     
+    # Iterate through model directories
     for model_dir in results_dir.iterdir():
         if not model_dir.is_dir():
             continue
-            
+        
+        # Iterate through dataset directories within each model
         for dataset_dir in model_dir.iterdir():
             if not dataset_dir.is_dir():
                 continue
-                
+            
+            metrics_path = dataset_dir / "model_metrics.pkl"
+            csv_path = dataset_dir / "question_metrics.csv"
+            
+            if not metrics_path.exists() or not csv_path.exists():
+                print(f"Skipping {dataset_dir} (missing model_metrics.pkl or question_metrics.csv)")
+                continue
+            
             try:
                 # Load model metrics
-                with open(dataset_dir / "model_metrics.pkl", "rb") as f:
+                with open(metrics_path, "rb") as f:
                     model_metrics = pickle.load(f)
                 
-                # Load question metrics for avg entropy
-                q_df = pd.read_csv(dataset_dir / "question_metrics.csv")
+                # Load question metrics
+                q_df = pd.read_csv(csv_path)
+                
+                # Calculate multi-sample accuracy
+                # Assuming ModelMetrics has greedy_accuracy or we compute from question_metrics
+                greedy_correct = sum(q_df['greedy_outcome'] == 'OutcomeType.CORRECT')
+                multi_correct = sum(q_df['num_correct_leaves'] > 0)
                 
                 all_results.append({
-                    'model': model_metrics.model_name.split('/')[-1],
-                    'dataset': model_metrics.dataset_name,
-                    'greedy_acc': model_metrics.greedy_accuracy,
-                    'multi_acc': (model_metrics.num_questions - model_metrics.multi_failures) / model_metrics.num_questions,
-                    'delta_acc': model_metrics.exploration_gain / model_metrics.num_questions,
-                    'avg_entropy': q_df['path_entropy'].mean(),
-                    'collapse_rate': model_metrics.collapse_failure,
-                    'rescue_rate': model_metrics.rescue_rate,
+                    'model': model_dir.name,
+                    'dataset': dataset_dir.name,
+                    'greedy_acc': greedy_correct / len(q_df) if len(q_df) > 0 else 0,
+                    'multi_acc': multi_correct / len(q_df) if len(q_df) > 0 else 0,
+                    'delta_acc': model_metrics.exploration_gain / model_metrics.num_questions if model_metrics.num_questions > 0 else 0,
+                    'avg_entropy': float(q_df['path_entropy'].mean()) if not q_df.empty else 0,
+                    'collapse_rate': model_metrics.collapse_failure if hasattr(model_metrics, 'collapse_failure') else 0,
                     'num_questions': model_metrics.num_questions
                 })
                 
-            except FileNotFoundError:
-                print(f"Skipping {dataset_dir} (missing files)")
+                print(f"Loaded {model_dir.name}/{dataset_dir.name}")
+                
+            except Exception as e:
+                print(f"Error loading {dataset_dir}: {e}")
+    
+    if not all_results:
+        print("\nNo valid results found! Check your results directory structure.")
+        print(f"Expected: {results_dir}/{{model}}/{{dataset}}/model_metrics.pkl")
     
     return pd.DataFrame(all_results)
 
