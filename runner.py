@@ -6,12 +6,15 @@ import pandas as pd
 import torch
 import numpy as np 
 import pickle
+import os
 from enum import Enum
 from typing import List, Dict,Tuple,Optional, Union
 from dataclasses import dataclass
 from pathlib import Path
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from sentence_transformers import SentenceTransformer
+from huggingface_hub import login
+from dotenv import load_dotenv
 
 from graph_structure import ReasoningGraph,Node, OutcomeType,benchmarking_config,QuestionMetrics,ModelMetrics,BenchmarkResults
 from models import load_lm, load_encoder
@@ -287,6 +290,21 @@ def run_full_pipeline(model_name: str, hf_dataset: str, dataset_config: str | No
     print(f"COMPLETE! Check results/{hf_dataset}_{model_name.split('/')[-1]}/")
 
 if __name__ == "__main__":
+    #### HF-login for llama models#########
+    load_dotenv() 
+    hf_token = os.environ.get("HF_TOKEN")
+    if hf_token:
+        login(token=hf_token)
+        print("Logged into HuggingFace")
+    else:
+        # Option 2: Fallback to interactive login
+        try:
+            login()  # Will prompt for token if not already logged in
+            print("Logged into HuggingFace")
+        except Exception as e:
+            print(f"HuggingFace login failed: {e}")
+            print("Some models may not load without authentication")
+
     parser = argparse.ArgumentParser(description="Reasoning Graph Benchmark")
     parser.add_argument("--model", required=True, help="HF model name (e.g., microsoft/DialoGPT-medium)")
     parser.add_argument("--dataset", required=True, help="HF dataset (e.g., gsm8k)")
