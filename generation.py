@@ -84,7 +84,7 @@ def generate_greedy(model, tokenizer, prompt: str, max_new_tokens: int = 1024) -
     Generate deterministically (T=0) AND compute path log-probability
     Returns: (generated_text: str, logprob: float)
     """
-        system_prompt = (
+    system_prompt = (
         "You are a logical reasoning assistant. "
         "Solve the problem step-by-step, then provide your final answer. "
         "Format your response as:\n"
@@ -92,7 +92,7 @@ def generate_greedy(model, tokenizer, prompt: str, max_new_tokens: int = 1024) -
         "Step 2: [reasoning]\n"
         "...\n"
         "Final Answer: [number OR true OR false]")
-        
+    
     messages = [{"role": "system", "content": system_prompt},
                 {"role": "user", "content": prompt}]
     full_prompt = tokenizer.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)

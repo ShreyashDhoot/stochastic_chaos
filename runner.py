@@ -28,62 +28,10 @@ from metrics import (
     extract_question_metrics,
     exploration_gain
 )
+
 from answer_parser import extract_final_answer, answers_match, normalize_answer
 from graphviz import Digraph
 from IPython.display import Image, display
-
-def plot_reasoning_graph(graph, max_edges=120, max_label_chars=40):
-    dot = Digraph("reasoning_graph", format="png")
-    dot.attr(rankdir="TB", splines="true", nodesep="0.35", ranksep="0.45")
-    dot.attr("node", shape="circle", fontsize="10")
-
-    def node_color(n):
-        if not n.is_leaf:
-            return "white"
-        if n.outcome is None:
-            return "lightgray"
-        if n.outcome.value == "Correct":
-            return "palegreen"
-        if n.outcome.value == "NearMiss":
-            return "gold"
-        if n.outcome.value == "Failure":
-            return "lightcoral"
-        return "lightgray"
-
-    greedy_edges = set()
-    if getattr(graph, "greedy_path", None) and len(graph.greedy_path) >= 2:
-        for a, b in zip(graph.greedy_path[:-1], graph.greedy_path[1:]):
-            greedy_edges.add((a, b))
-
-    # Nodes
-    for node_id, n in graph.nodes.items():
-        # label: id + (optional) logprob for leaves
-        lp = None
-        if hasattr(graph, "leaf_logprobs"):
-            lp = graph.leaf_logprobs.get(node_id, None)
-
-        label = f"{node_id}"
-        if n.is_leaf:
-            label += f"\n{n.outcome.value if n.outcome else 'None'}"
-        if lp is not None:
-            label += f"\nlp={float(lp):.1f}"
-
-        dot.node(str(node_id), label=label, style="filled", fillcolor=node_color(n))
-
-    # Edges
-    edges = graph.edges[:max_edges]
-    for e in edges:
-        txt = (e.step_text or "").replace("\n", " ")
-        if len(txt) > max_label_chars:
-            txt = txt[:max_label_chars] + "…"
-
-        if (e.from_node_id, e.to_node_id) in greedy_edges:
-            dot.edge(str(e.from_node_id), str(e.to_node_id), label=txt, color="green", penwidth="3")
-        else:
-            dot.edge(str(e.from_node_id), str(e.to_node_id), label=txt, color="gray60", penwidth="1")
-
-    return dot
-
 
 
 #function to run the whole pipeline per question
@@ -124,9 +72,9 @@ def run_for_question(model,tokenizer,encoder:SentenceTransformer,config:benchmar
     
     #labelling the leaf outcomes 
     label_leaf_outcomes(graph,ground_truth_answer,gt_step_embs)
-    dot= plot_reasoning_graph(graph)
-    png_path = dot.render("/kaggle/working/reasoning_graph_q0", format="png", cleanup=True)
-    display(Image(png_path))
+   # dot= plot_reasoning_graph(graph)
+    #png_path = dot.render("/kaggle/working/reasoning_graph_q0", format="png", cleanup=True)
+    #display(Image(png_path))
     print("GRAPH CREATED\n")
     return graph
 
